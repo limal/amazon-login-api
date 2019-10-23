@@ -1,17 +1,48 @@
-const config = require('dotenv/config');
+require('dotenv').config();
 const express = require('express');
-var cors = require('cors')
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const request = require('request-promise');
 
 const BUILD_VERSION = 2;
 const buildVersion = `Build #${BUILD_VERSION}`;
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
 
 const app = express();
 
 app.use(cors())
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 
 app.get('/', (req, res) => {
-    return res.send(`Amazon Login API - ${buildVersion}`);
+  return res.send(`Amazon Login API - ${buildVersion}`);
 });
+
+app.post('/customers/auth', (req, res) => {
+  requestAccessToken(req.body.code)
+    .then(response => {
+      res.send(JSON.stringify(response, null, 2))
+    })
+    .catch(error => {
+      console.log('ERROR', error);
+      res.status(400).send(JSON.stringify(error, null, 2));
+    });
+});
+
+const requestAccessToken = (code) => {
+  return request.post(
+    'https://api.amazon.com/auth/o2/token',
+    {
+      form: {
+        grant_type: 'authorization_code',
+        code,
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET
+      }
+    }
+  );
+}
 
 const port = process.env.PORT || 3000;
 
