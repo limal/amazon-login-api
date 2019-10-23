@@ -1,0 +1,24 @@
+pipeline:
+  build:
+    image: plugins/docker
+    registry: docker.beetlock.com
+    repo: docker.beetlock.com/amazon-login-api
+    username:
+      from_secret: docker_username # lukasz
+    password:
+      from_secret: docker_password # M3x3
+    tags:
+      - 1.0.0
+      - 1.0
+      - latest
+  ssh:
+    image: appleboy/drone-ssh
+    host: beetlock.com
+    username:
+      from_secret: ssh_username # drone
+    password:
+      from_secret: ssh_password # M3x2
+    port: 22
+    command_timeout: 2m
+    script:
+      - cd /home/lukasz/traefik-server && ./amazon-login-api.sh
