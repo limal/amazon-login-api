@@ -7,7 +7,7 @@ const app = express();
 app.use(cors())
 
 app.get('/', (req, res) => {
-    return res.send('Received a GET HTTP method');
+    return res.send('Amazon Login API - Build 1');
 });
 
 const port = process.env.PORT || 3000;
