@@ -22,11 +22,11 @@ app.get('/', (req, res) => {
 app.post('/customers/auth', (req, res) => {
   requestAccessToken(req.body.code)
     .then(response => {
-      res.send(JSON.stringify(response, null, 2))
+      res.send(response);
     })
     .catch(error => {
       console.log('ERROR', error);
-      res.status(400).send(JSON.stringify(error, null, 2));
+      res.status(400).send(error);
     });
 });
 
